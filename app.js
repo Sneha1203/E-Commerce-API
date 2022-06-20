@@ -24,9 +24,6 @@ app.use(express.json())
 app.use(cookieParser(process.env.JWT_SECRET))
 
 
-
-
-
 // routes
 app.get('/', (request, response) => {
     response.send('E-Commerce API')

@@ -30,11 +30,37 @@ const register = async(request, response) => {
 }
 
 const login = async(request, response) => {
-    response.send('login a user')
+    const {email, password} = request.body
+
+    if(!email || !password) {
+        throw new CustomError.BadRequestError('Please enter both email and password...')
+    }
+
+    const user = await User.findOne({email})
+
+    if(!user) {
+        throw new CustomError.UnauthenticatedError('Invalid credentials....')
+    }
+
+    const isPasswordCorrect = await user.comparePassword(password)
+
+    if(!isPasswordCorrect){
+        throw new CustomError.UnauthenticatedError('Invalid credentials....')
+    }
+
+    const tokenUser = {name: user.name, userId: user._id, role: user.role}
+    attachCookieToResponse({response, user: tokenUser})
+    response.status(StatusCodes.CREATED).json({user: tokenUser})
+    // response.send('login a user')
 }
 
 const logout = async(request, response) => {
-    response.send('logout a user')
+    response.cookie('token', 'logout', {
+        httpOnly: true,
+        expires: new Date(Date.now())
+    })
+    response.status(StatusCodes.OK).json({msg: 'user logged out'})
+    // response.send('logout a user')
 }
 
 module.exports = {
