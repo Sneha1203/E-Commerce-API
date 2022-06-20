@@ -21,7 +21,10 @@ const register = async(request, response) => {
     // const token = await jwt.sign(tokenUser, process.env.JWT_SECRET, {expiresIn: process.env.JWT_LIFETIME})
     const token = createJWT({payload: tokenUser})
 
-    response.status(StatusCodes.CREATED).json({user: tokenUser, token})
+    const oneDay = 1000 * 60 * 60 * 24
+    response.cookie('token', token, {httpOnly: true, expires: new Date(Date.now() + oneDay)})
+
+    response.status(StatusCodes.CREATED).json({user: tokenUser})
     // response.send('register a user')
 }
 
