@@ -5,7 +5,7 @@ const express = require('express')
 const router = express.Router()
 
 router.route('/').get(authenticateUser, authorizePermissions('admin'), getAllUsers)
-router.route('/showMe').get(showCurrentUser)
+router.route('/showMe').get(authenticateUser, showCurrentUser)
 router.route('/updateUser').patch(updateUser)
 router.route('/updateUserPassword').patch(updateUserPassword)
 router.route('/:id').get(authenticateUser, getSingleUser)     //order of this route is important here!
